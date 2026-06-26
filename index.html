@@ -163,23 +163,39 @@
     /* ── rename input ── */
     .rename-row {
       display: flex; align-items: center; gap: 6px;
-      margin-top: 5px;
+      margin-top: 6px;
+      padding: 6px 8px;
+      background: rgba(124, 92, 252, 0.06);
+      border: 1px dashed rgba(124, 92, 252, 0.3);
+      border-radius: 8px;
+    }
+    .rename-label {
+      font-size: 12px;
+      color: var(--primary);
+      white-space: nowrap;
+      font-weight: 500;
+      flex-shrink: 0;
     }
     .rename-input {
       flex: 1;
       padding: 5px 8px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
       border-radius: 6px;
       color: var(--text);
       font-size: 12px;
       outline: none;
-      transition: border-color 0.2s;
+      transition: all 0.2s;
       min-width: 0;
+    }
+    .rename-input:hover {
+      border-color: var(--primary);
+      background: rgba(124, 92, 252, 0.1);
     }
     .rename-input:focus {
       border-color: var(--primary);
-      background: rgba(124, 92, 252, 0.08);
+      background: rgba(124, 92, 252, 0.12);
+      box-shadow: 0 0 0 3px rgba(124, 92, 252, 0.15);
     }
 
     .icon-btn {
@@ -512,7 +528,8 @@
                 <div class="fi-meta">${metaHtml}</div>
                 ${f.status === 'done' && f.mp3Blob ? `
                 <div class="rename-row">
-                  <input class="rename-input" type="text" value="${escapeHtml(f.outputName)}" data-action="rename" data-id="${f.id}" placeholder="输出文件名">
+                  <span class="rename-label">重命名为</span>
+                  <input class="rename-input" type="text" value="${escapeHtml(f.outputName)}" data-action="rename" data-id="${f.id}" placeholder="输入文件名...">
                 </div>` : ''}
               </div>
               <div class="fi-actions">${actionHtml}</div>

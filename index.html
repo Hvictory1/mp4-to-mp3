@@ -465,7 +465,7 @@
             convertedFormat: null,
             progress: 0,
             progressText: '',
-            outputName: file.name.replace(/\.(mp4|mov|mkv|avi|webm|flv|wmv)$/i, '') + '.' + outputFormat,
+            outputName: '',
           });
           added++;
         }
@@ -556,7 +556,7 @@
                 ${f.status === 'done' && f.mp3Blob ? `
                 <div class="rename-row">
                   <span class="rename-label">重命名为</span>
-                  <input class="rename-input" type="text" value="${escapeHtml(f.outputName)}" data-action="rename" data-id="${f.id}" placeholder="输入文件名...">
+                  <input class="rename-input" type="text" value="${escapeHtml(f.outputName)}" data-action="rename" data-id="${f.id}" placeholder="留空则使用原文件名">
                 </div>` : ''}
               </div>
               <div class="fi-actions">${actionHtml}</div>
@@ -585,7 +585,10 @@
           if (f && f.mp3Blob) {
             // Read current value from the rename input in case user hasn't blurred yet
             const input = fileList.querySelector(`input[data-action="rename"][data-id="${id}"]`);
-            const outName = (input ? input.value.trim() : f.outputName) || f.outputName;
+            const userVal = (input ? input.value.trim() : f.outputName) || f.outputName;
+            // If user provided a name, use it; otherwise fall back to original filename + format extension
+            const fmt = f.convertedFormat || 'mp3';
+            const outName = userVal || f.file.name.replace(/\.(mp4|mov|mkv|avi|webm|flv|wmv)$/i, '') + '.' + fmt;
             downloadBlob(f.mp3Blob, outName);
           }
         } else if (action === 'remove') {
@@ -600,7 +603,7 @@
         const id = parseInt(input.dataset.id);
         const f = files.find(x => x.id === id);
         if (f) {
-          f.outputName = input.value.trim() || f.outputName;
+          f.outputName = input.value.trim();
         }
       });
 
@@ -661,9 +664,9 @@
         // Toggle active
         document.querySelectorAll('.format-option').forEach(b => b.classList.toggle('active', b.dataset.format === fmt));
 
-        // Update pending file extensions (only pending ones)
+        // Update pending file extensions — only for files the user already renamed
         files.forEach(f => {
-          if (f.status === 'pending' || f.status === 'error') {
+          if ((f.status === 'pending' || f.status === 'error') && f.outputName) {
             f.outputName = f.outputName.replace(/\.(mp3|wav)$/i, '') + '.' + fmt;
           }
         });
